@@ -6,14 +6,14 @@ def definicaoDeDificuldade():
     print("(1)Fácil (2)Médio (3)Difícil")
     dificuldade = int(input())
     if dificuldade == 1:
-        print("No seguro, hein? Boa sorte! (^◡^ )")
-        return 5, 5, random.randint(7, 14)
+        print("No seguro, hein? Boa sorte! Serão 10 minas! (^◡^ )")
+        return 8, 8, 10
     elif dificuldade == 2:
-        print("Hehe, boa sorte! (^◡^ )")
-        return 7, 7, random.randint(20, 30)
+        print("Hehe, boa sorte! Serão 40 minas. (^◡^ )")
+        return 14, 14, 40
     elif dificuldade == 3:
-        print("Uau, que pessoa corajosa! Boa sorte (^◡^ )")
-        return 10, 10, random.randint(30, 60)
+        print("Uau, que pessoa corajosa! Boa sorte! Serão 99 minas! (^◡^ )")
+        return 20, 20, 99
     else:
         print("Opção inválida. Escolha novamente. (^◡^ )")
         return definicaoDeDificuldade()
@@ -30,9 +30,9 @@ def criarTabuleiroVisivel(colunas, linhas):
 def jogo():
     colunas, linhas, minas = definicaoDeDificuldade()
     tabuleiroVisivel = criarTabuleiroVisivel(colunas, linhas)
-    tabuleiroReal = criarMatriz(colunas, linhas)
+    tabuleiroReal = criarMatriz(linhas, colunas)
     infoMinas(tabuleiroReal, colunas, linhas, minas)
-    jogando(tabuleiroVisivel, tabuleiroReal, colunas, linhas)
+    jogando(tabuleiroVisivel, tabuleiroReal, colunas, linhas, minas)
 
 def infoMinas(tabuleiroReal, colunas, linhas, minas):
     localMinas = random.sample(range(colunas * linhas), minas)
@@ -72,9 +72,10 @@ def marcacoes():
     coordenadas = obterCoordenadas()
     return acao, coordenadas
 
-def mostrarTabuleiro(tabuleiroVisivel):
+def mostrarTabuleiro(tabuleiroVisivel, minas_restantes):
     for linha in tabuleiroVisivel:
         print(' '.join(linha))
+    print(f"Minas restantes: {minas_restantes}")
 
 def contarMinas(tabuleiroReal, linha, coluna):
     linhas = len(tabuleiroReal)
@@ -104,8 +105,9 @@ def verificarVitoria(tabuleiroReal, tabuleiroVisivel):
                 return False
     return True
 
-def jogando(tabuleiroVisivel, tabuleiroReal, colunas, linhas):
-    mostrarTabuleiro(tabuleiroVisivel)
+def jogando(tabuleiroVisivel, tabuleiroReal, colunas, linhas, minas):
+    minas_restantes = minas
+    mostrarTabuleiro(tabuleiroVisivel, minas_restantes)
     while True:
         acao, (x, y) = marcacoes()
 
@@ -116,12 +118,14 @@ def jogando(tabuleiroVisivel, tabuleiroReal, colunas, linhas):
         if acao == 'M':
             if tabuleiroVisivel[x][y] == '.':
                 tabuleiroVisivel[x][y] = 'M'
+                minas_restantes -= 1
             else:
                 print("Esta posição já está marcada! (>‿◠)✌")
                 continue
         elif acao == 'T':
             if tabuleiroVisivel[x][y] == 'M':
                 tabuleiroVisivel[x][y] = '.'
+                minas_restantes += 1
             else:
                 print("Esta posição não está marcada! (>‿◠)✌")
                 continue
@@ -132,9 +136,9 @@ def jogando(tabuleiroVisivel, tabuleiroReal, colunas, linhas):
         else:
             print("Sinto muito, ação inválida. (╥﹏╥)")
             continue
-        mostrarTabuleiro(tabuleiroVisivel)
+        mostrarTabuleiro(tabuleiroVisivel, minas_restantes)
         if verificarVitoria(tabuleiroReal, tabuleiroVisivel):
-            print('Parabéns! Você venceu ᕙ(`▿´)ᕗ')
+            print('Parabéns! Você venceu, você é demais!!! ᕙ(`▿´)ᕗ')
             break
-    
+
 jogo()
